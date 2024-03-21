@@ -15,12 +15,10 @@ request.interceptors.request.use(config => {
 
     config.headers['Content-Type'] = 'application/json;charset=utf-8';        // 设置请求头格式
     let user = JSON.parse(localStorage.getItem("xm-user") || '{}')  // 获取缓存的用户信息
-    console.log(user)
-    console.log(user.token)
+
     // Set different tokens based on different request URLs
     if (config.url.includes('admin')) {
         config.headers['token'] = user.token;
-        console.log("admin")
     } else {
         config.headers['authentication'] = user.token;
     }
@@ -35,9 +33,6 @@ request.interceptors.request.use(config => {
 // 可以在接口响应后统一处理结果
 request.interceptors.response.use(
     response => {
-        console.log(response)
-
-
         let res = response.data;
         // 兼容服务端返回的字符串数据
         if (typeof res === 'string') {

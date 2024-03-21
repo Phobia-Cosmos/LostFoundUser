@@ -31,15 +31,12 @@
           查询
         </el-button>
         <!--        TODO:为什么这里会自动变灰？-->
-        <el-button type="primary" plain @click="handleAdd">发布失物招领</el-button>
+        <el-button type="primary" plain @click="addButton">发布失物招领</el-button>
       </div>
-
-      <!--      <div style="margin: 20px 20px">-->
-      <!--        <el-button type="primary" plain @click="handleAdd">发布失物招领</el-button>-->
-      <!--      </div>-->
 
       <div class="table">
         <el-table :data="tableData" stripe:true row-key="id">
+          <!--          TODO:具体信息点击后显示，或者触碰显示-->
           <el-table-column prop="id" label="序号" width="80" align="center" sortable/>
           <el-table-column label="失物招领图片" show-overflow-tooltip>
             <template v-slot="scope">
@@ -50,24 +47,22 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" label="失物招领名称"/>
-          <!--          <el-table-column prop="content" label="具体描述信息">-->
-          <!--            <template v-slot="scope">-->
-          <!--              <el-button type="primary" size="mini" @click="viewEditor(scope.row.content)">点击查看</el-button>-->
-          <!--            </template>-->
-          <!--          </el-table-column>-->
           <el-table-column prop="status" label="失物招领状态" :formatter="formatStatus"/>
           <el-table-column prop="tag" label="物品类型" :formatter="formatTag"/>
           <el-table-column prop="isLost" label="失物招领类型" :formatter="formatIsLost"/>
           <el-table-column prop="startTime" label="起始时间"/>
           <el-table-column prop="endTime" label="截止时间"/>
           <el-table-column prop="publishTime" label="发表时间"/>
-          <el-table-column label="操作" width="180" align="center">
+          <el-table-column label="操作" width="220" align="center">
             <template v-slot="{ row }">
               <el-button plain type="danger" size="mini"
                          @click="() => delItem(row.id)">删除
               </el-button>
               <el-button plain type="success" size="mini"
-                         @click="() => updateItem(row.id)">修改
+                         @click="() => updateButton(row.id)">修改
+              </el-button>
+              <el-button plain type="success" size="mini"
+                         @click="() => finishItem(row.id)">完成
               </el-button>
             </template>
           </el-table-column>
@@ -86,91 +81,117 @@
         </el-row>
       </div>
 
-      <el-dialog title="发布招领信息" :visible.sync="fromVisible" width="80%" destroy-on-close>
-        <el-form label-width="100px" style="padding-right: 50px" :model="form">
+      <el-dialog title="修改失物招领" :visible.sync="updateVisible" width="80%" @close="btnCancelUpdate"
+                 destroy-on-close>
+        <!--不写rules-->
+        <el-form ref="updateForm" label-width="100px" style="padding-right: 50px" :model="updateForm">
           <el-form-item prop="img" label="物品图片">
-            <el-upload
-                class="avatar-uploader"
-                :action="$baseUrl + '/files/upload'"
-                :headers="{ token: user.token }"
-                list-type="picture"
-                :on-success="handleImgSuccess">
-              <el-button type="primary">上传招领物品图片</el-button>
-            </el-upload>
-          </el-form-item>
-          <el-form-item prop="name" label="物品名称">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item prop="status" label="物品状态">
-            <el-select v-model="form.status" placeholder="请选择状态" style="width: 100%">
-              <el-option label="未找到失主" value="未找到失主"></el-option>
-              <el-option label="已找到失主" value="已找到失主"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item prop="content" label="物品描述">
-            <div id="editor">
-            </div>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="fromVisible = false">取 消</el-button>
-          <el-button type="primary" @click="save">确 定</el-button>
-        </div>
-      </el-dialog>
-
-      <el-dialog title="修改招领信息" :visible.sync="updateVisible" width="80%" destroy-on-close>
-        <el-form label-width="100px" style="padding-right: 50px" :model="form">
-          <el-form-item prop="img" label="物品图片">
-            <!--            :headers="{ token: user.token }"-->
             <el-upload
                 class="avatar-uploader"
                 :action="uploadUrl"
                 list-type="picture"
-                :on-success="handleAvatarSuccess">
+                :headers="{ authentication: user.token }"
+                :on-success="handleAvatarSuccess"
+                :file-list="formattedFileList">
               <el-button type="primary">上传招领物品图片</el-button>
             </el-upload>
           </el-form-item>
           <el-form-item prop="name" label="物品名称">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
+            <el-input v-model="updateForm.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item prop="status" label="物品状态">
-            <el-select v-model="form.status" placeholder="请选择状态" style="width: 100%">
-              <el-option label="未找到失主" value="未找到失主"></el-option>
-              <el-option label="已找到失主" value="已找到失主"></el-option>
+          <el-form-item prop="isLost" label="物品状态">
+            <el-select v-model="updateForm.isLost" placeholder="请选择状态" style="width: 100%">
+              <el-option label="失物" :value="1"></el-option>
+              <el-option label="招领" :value="0"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="content" label="物品描述">
+          <el-form-item prop="description" label="物品描述">
             <div id="editor">
             </div>
           </el-form-item>
+          <el-form-item>
+            <el-button size="mini" type="primary" @click="modifyItem">确认修改</el-button>
+            <el-button size="mini" @click="btnCancelUpdate">取消</el-button>
+          </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="fromVisible = false">取 消</el-button>
-          <el-button type="primary" @click="save">确 定</el-button>
-        </div>
       </el-dialog>
 
       <el-dialog title="详细信息" :visible.sync="viewVisible" width="80%" :close-on-click-modal="false"
                  destroy-on-close>
         <div v-html="viewData" class="w-e-text w-e-text-container"></div>
       </el-dialog>
+
+      <el-dialog title="发布失物招领" :visible.sync="addVisible" width="80%" @close="btnCancelUpdate" destroy-on-close>
+        <el-form ref="addForm" label-width="100px" style="padding-right: 50px" :model="addForm">
+          <el-form-item prop="img" label="物品图片">
+            <el-upload
+                class="avatar-uploader"
+                :action="uploadUrl"
+                :headers="{ authentication: user.token }"
+                list-type="picture"
+                :on-success="handleImgSuccess"
+                :file-list="formattedFileList">
+              <el-button type="primary">上传招领物品图片</el-button>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item prop="name" label="物品名称">
+            <el-input v-model="addForm.name" autocomplete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="isLost" label="物品状态">
+            <el-select v-model="addForm.isLost" placeholder="请选择状态" style="width: 100%">
+              <el-option label="失物" :value="1"></el-option>
+              <el-option label="招领" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item prop="description" label="物品描述">
+            <div id="editor">
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="mini" type="primary" @click="publishItem">确认新增</el-button>
+            <el-button size="mini" @click="btnCancelAdd">取消</el-button>
+          </el-form-item>
+        </el-form>
+
+      </el-dialog>
+
     </div>
   </div>
 </template>
 
 <script>
 import E from 'wangeditor'
-import {deleteItem, userPageQuery} from "@/apis/item";
+import {deleteItem, finishItem, modifyItem, publishItem, userGetItemById, userPageQuery} from "@/apis/item";
 
 export default {
   data() {
     return {
       tableData: [],
       updateVisible: false,
-      fromVisible: false,
+      addVisible: false,
       viewVisible: false,
       uploadUrl: 'http://localhost:9090/user/v2/user/upload', // Define the action URL
 
+      currentNodeId: null, // 存储当前点击的id
+
+      addForm: {
+        description: "",
+        img: "",
+        isLost: 0,
+        name: "",
+      },
+      updateForm: {
+        description: "",
+        endTime: null,
+        id: 0,
+        img: "",
+        isLost: 0,
+        name: "",
+        startTime: null,
+      },
       queryParams: {
         page: 1,
         pageSize: 5,
@@ -180,20 +201,30 @@ export default {
         startTime: null,
         endTime: null
       },
-      updateForm: {
-
-      },
-
       total: 0,
 
       editor: null,
       viewData: null,
-      form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
     }
   },
   created() {
     this.getItemList()
+  },
+  // TODO:如何动态获取编辑器中的数据？
+  // watch: {
+  //   'updateForm.description': function(newVal, oldVal) {
+  //     console.log('Description changed:', newVal);
+  //   }
+  // },
+  computed: {
+    formattedFileList() {
+      if (this.updateForm.img) {
+        return [{uid: '-1', url: this.updateForm.img}];
+      } else {
+        return [];
+      }
+    }
   },
   methods: {
     async getItemList() {
@@ -214,9 +245,6 @@ export default {
         console.error('An error occurred while fetching item list:', error);
       }
     },
-    async updateItem(id) {
-
-    },
     async delItem(ids) {
       const res = await deleteItem(ids)
       if (res.code === 200) {
@@ -224,9 +252,49 @@ export default {
         await this.getItemList()
       }
     },
+    async getItemById(id) {
+      try {
+        const response = await userGetItemById(id);
+        const {data} = response;
+        // TODO:这个起始时间还没有设置
+        this.updateForm.name = data.name
+        this.updateForm.img = data.img
+        this.updateForm.isLost = data.isLost
+        this.updateForm.description = data.description
+      } catch (error) {
+        console.error('An error occurred while fetching item list:', error);
+      }
+    },
+    async finishItem(id) {
+      const res = await finishItem(id)
+      if (res.code === 200) {
+        this.$message.success(res.msg)
+        await this.getItemList()
+      }
+    },
+    async publishItem() {
+      const response = await publishItem({...this.addForm, userId: this.user.id});
+      if (response.code === 200) {
+        this.$message.success(response.msg)
+        this.btnCancelAdd()
+        await this.getItemList()
+      }
+    },
+    async modifyItem() {
+      const response = await modifyItem(this.updateForm);
+      if (response.code === 200) {
+        this.$message.success(response.msg)
+        this.btnCancelUpdate()
+        await this.getItemList()
+      }
+    },
+    // ------------------------------------------------------------------------------------
+    // 更新过程中图片上传成功后回传图片路径到更新表单中
     async handleAvatarSuccess(response) {
-      this.infoForm.avatar = response.data;
-      console.log(this.infoForm.avatar)
+      this.updateForm.img = await response.data;
+    },
+    async handleImgSuccess(response) {
+      this.addForm.img = await response.data;
     },
     initFun() {
       this.page = 1
@@ -237,13 +305,51 @@ export default {
         this.editor = new E('#editor')
         this.editor.config.placeholder = '请输入内容'
         this.editor.config.uploadFileName = 'file'
-        this.editor.config.uploadImgServer = 'http://localhost:9090/files/wang/upload'
+        this.editor.config.uploadImgServer = this.uploadUrl
+        if(content === "add"){
+          this.editor.config.onchange = html => {
+            this.addForm.description = html; // Update editorContent whenever content changes
+          };
+        }else {
+          this.editor.config.onchange = html => {
+            this.updateForm.description = html; // Update editorContent whenever content changes
+          };
+        }
         this.editor.create()
         setTimeout(() => {
           this.editor.txt.html(content)
         })
       })
     },
+    // TODO:注意这里一定要await否则编辑器中得不到数据
+    async addButton() {
+      this.addVisible = true
+      this.handleAdd()
+    },
+    async updateButton(id) {
+      this.updateForm.id = id
+      this.updateVisible = true
+      await this.getItemById(id)
+      this.handleUpdate()
+    },
+    // ------------------------------------------------------------------------------------
+    handleAdd() {
+      this.initWangEditor("add")
+      this.addVisible = true
+    },
+    handleUpdate() {
+      this.initWangEditor("update")
+      this.updateVisible = true
+    },
+    btnCancelAdd() {
+      this.$refs.addForm.resetFields() // 重置表单
+      this.addVisible = false
+    },
+    btnCancelUpdate() {
+      this.$refs.updateForm.resetFields() // 重置表单
+      this.updateVisible = false
+    },
+    // ------------------------------------------------------------------------------------
     formatDate(timestamp) {
       const date = new Date(timestamp);
       const year = date.getFullYear();
@@ -278,45 +384,11 @@ export default {
           return '未知种类';
       }
     },
-    // load(pageNum){
-    //   if (pageNum) this.pageNum = pageNum
-    //   this.$request.get('/user/v2/item/page', {
-    //     params: {
-    //       pageNum: this.pageNum,
-    //       pageSize: this.pageSize,
-    //       userId:this.user.id
-    //     }
-    //   }).then(res => {
-    //     this.tableData = res.data?.list
-    //     this.total = res.data?.total
-    //   })
+    // handleEdit(row) {
+    //   this.form = JSON.parse(JSON.stringify(row))//这里把form和对象转换成两个东西分隔开
+    //   this.initWangEditor(this.form.content || '')
+    //   this.fromVisible = true
     // },
-    handleAdd() {
-      this.form = {}
-      this.initWangEditor('')
-      this.fromVisible = true
-    },
-    handleEdit(row) {
-      this.form = JSON.parse(JSON.stringify(row))//这里把form和对象转换成两个东西分隔开
-      this.initWangEditor(this.form.content || '')
-      this.fromVisible = true
-    },
-    save() {
-      this.form.content = this.editor.txt.html()
-      this.$request({
-        url: this.form.id ? '/user/v2/item/upload' : '/user/v2/item/',
-        method: this.form.id ? 'PUT' : 'POST',
-        data: this.form
-      }).then(res => {
-        if (res.code === 200) {  // 表示成功保存
-          this.$message.success('保存成功')
-          this.fromVisible = false
-          this.load(1)
-        } else {
-          this.$message.error(res.msg)  // 弹出错误的信息
-        }
-      })
-    },
     reset() {
       this.queryParams.name = null
       this.getItemList()
@@ -328,9 +400,6 @@ export default {
     handleSizeChange(pageSize) {
       this.queryParams.pageSize = pageSize;
       this.getItemList();
-    },
-    handleImgSuccess(res) {
-      this.form.img = res.data
     },
     // viewEditor(content) {
     //   this.viewData = content

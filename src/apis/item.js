@@ -28,7 +28,9 @@ export function finishItem(data) {
     return request({
         url: '/user/v2/item/finish',
         method: 'put',
-        data
+        data: {
+            id: data
+        }
     })
 }
 
