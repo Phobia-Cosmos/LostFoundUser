@@ -155,7 +155,6 @@
             <el-button size="mini" @click="btnCancelAdd">取消</el-button>
           </el-form-item>
         </el-form>
-
       </el-dialog>
 
     </div>

@@ -17,6 +17,12 @@ export function loginUser(data) {
     })
 }
 
+export function qqLogin() {
+    return request({
+        url: `/user/v2/user/qqlogin`,
+    })
+}
+
 export function deleteUser(data) {
     return request({
         url: '/user/v2/user',
@@ -46,3 +52,26 @@ export function getUserById(id) {
         url: `/user/v2/user/${id}`,
     })
 }
+
+// export function getCode(data) {
+//     const formData = new FormData();
+//     formData.append('targetEmail', data);
+//
+//     return request({
+//         url: '/user/v2/user/getCode',
+//         method: 'post',
+//         data: formData,
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded' // Specify content type as form data
+//         }
+//     });
+// }
+
+export function getCode(data) {
+    return request({
+        url: '/user/v2/user/getCode',
+        method: 'post',
+        data: { targetEmail: data } // Send data as a JavaScript object
+    });
+}
+

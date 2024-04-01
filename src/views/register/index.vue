@@ -2,16 +2,25 @@
   <div class="container">
 
     <div style="width: 400px; padding: 30px; background-color: white; border-radius: 5px;">
-      <div style="text-align: center; font-size: 20px; margin-bottom: 20px; color: #333">欢迎注册</div>
+      <div style="text-align: center; font-size: 20px; margin-bottom: 20px; color: #333">注册</div>
 
       <el-form :model="form" :rules="rules" ref="formRef">
         <el-form-item prop="username">
-          <el-input prefix-icon="el-icon-user" placeholder="请输入账号" v-model="form.username"></el-input>
+          <el-input prefix-icon="el-icon-user" placeholder="请输入手机号/邮箱" v-model="form.username"
+                    clearable></el-input>
+        </el-form-item>
+
+        <el-form-item prop="verifyCode">
+          <el-input v-model="form.code" placeholder="请输入验证码">
+            <template slot="append">
+              <verification-code-input :username="form.username" :disabled="isButtonDisabled" @send="updateVerifyCode"></verification-code-input>
+            </template>
+          </el-input>
         </el-form-item>
 
         <el-form-item prop="password">
           <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" show-password
-                    v-model="form.password"></el-input>
+                    v-model="form.password" clearable></el-input>
         </el-form-item>
 
         <el-form-item prop="confirmPass">
@@ -39,9 +48,14 @@
 
 <script>
 import {registerUser} from "@/apis/user";
+import VerificationCodeInput from './components/VerificationCodeInput.vue';
+
 
 export default {
   name: "Register",
+  components: {
+    VerificationCodeInput
+  },
   data() {
     // 验证码校验
     const validatePassword = (rule, confirmPass, callback) => {
@@ -56,6 +70,7 @@ export default {
     return {
       form: {
         username: '',
+        code: '',
         password: '',
         confirmPass: ''
       },
@@ -66,10 +81,18 @@ export default {
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
         ],
+        code: [
+          {required: true, message: '请输入验证码', trigger: 'blur'},
+        ],
         confirmPass: [
           {validator: validatePassword, trigger: 'blur'}
         ]
       }
+    }
+  },
+  computed: {
+    isButtonDisabled() {
+      return !this.form.username; // Disable the button if username is not provided
     }
   },
   created() {
@@ -77,7 +100,6 @@ export default {
   },
   methods: {
     async register() {
-      // Validate the form
       this.$refs['formRef'].validate(async (valid) => {
         if (valid) {
           try {
@@ -95,7 +117,10 @@ export default {
           }
         }
       });
-    }
+    },
+    updateVerifyCode() {
+      // this.$message.success("验证码已发送")
+    },
   }
 }
 </script>

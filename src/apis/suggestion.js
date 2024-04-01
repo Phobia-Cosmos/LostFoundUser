@@ -52,24 +52,3 @@ export function userPageQuery(params) {
         params
     })
 }
-
-export function adminPageQuery(params) {
-    return request({
-        url: `/admin/v2/suggest/page`,
-        params
-    })
-}
-
-export function validateSuggestion(data) {
-    return request({
-        url: '/admin/v2/suggest/validate',
-        method: 'put',
-        data
-    })
-}
-
-export function adminGetSuggestionById(id) {
-    return request({
-        url: `/admin/v2/suggest/${id}`,
-    })
-}

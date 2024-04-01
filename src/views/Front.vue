@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="front-notice"><i class="el-icon-bell" style="margin-right: 2px"></i>公告：{{ top }}</div>
+
     <!--头部-->
     <div class="front-header">
       <div class="front-header-left">
@@ -11,9 +12,9 @@
       <div class="front-header-center">
         <div class="front-header-nav">
           <el-menu :default-active="$route.path" mode="horizontal" router>
-            <el-menu-item index="/front/home">首页</el-menu-item>
-            <el-menu-item index="/front/item">失物招领广场</el-menu-item>
-            <el-menu-item index="/front/suggestion">平台建议</el-menu-item>
+            <el-menu-item index="/home">首页</el-menu-item>
+            <el-menu-item index="/item">失物招领广场</el-menu-item>
+            <el-menu-item index="/suggestion">平台建议</el-menu-item>
           </el-menu>
         </div>
       </div>
@@ -39,12 +40,12 @@
             </div>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <div style="text-decoration: none" @click="navTo('/front/myItem')">我的失物招领</div>
+                <div style="text-decoration: none" @click="navTo('myItem')">我的失物招领</div>
               </el-dropdown-item>
               <!--              TODO:这里后续要修改逻辑与后端-->
-              <!--              <el-dropdown-item>-->
-              <!--                <div style="text-decoration: none" @click="navTo('/front/message')">我的消息</div>-->
-              <!--              </el-dropdown-item>-->
+              <el-dropdown-item>
+                <div style="text-decoration: none" @click="navTo('message')">我的消息</div>
+              </el-dropdown-item>
               <!--              <el-dropdown-item>-->
               <!--                <div style="text-decoration: none" @click="navTo('/front/person')">个人中心</div>-->
               <!--              </el-dropdown-item>-->

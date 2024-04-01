@@ -1,63 +1,91 @@
 <template>
-  <div class="main-content">
-    <div style="width:70%;margin:20px auto">
-      <div style="font-size: 20px;color: #000b17;margin: 10px">我联系的({{ total }})</div>
-      <div class="table">
-        <el-table :data="tableData" strip>
-          <el-table-column prop="id" label="序号" width="70" align="center" sortable></el-table-column>
-          <el-table-column label="物品图片">
-            <template v-slot="scope">
-              <div style="display: flex; align-items: center">
-                <el-image style="width: 40px; height: 40px; border-radius: 50%" v-if="scope.row.articleImg"
-                          :src="scope.row.articleImg" :preview-src-list="[scope.row.articleImg]"></el-image>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="articleName" label="物品名称"></el-table-column>
-          <el-table-column prop="toName" label="发布人"></el-table-column>
-          <el-table-column prop="content" label="联系内容"></el-table-column>
-          <el-table-column prop="type" label="类型"></el-table-column>
-          <el-table-column prop="time" label="联系时间"></el-table-column>
-          <el-table-column label="操作" align="center" width="180">
-            <template v-slot="scope">
-              <el-button size="mini" type="danger" plain @click="del(scope.row.id)">删除</el-button>
+  <div class="dashboard-container">
+    <div style="width:70%;margin:20px auto" class="container">
+      <div class="tableBar">
+        <!--        <el-table :data="tableData" strip>-->
+        <!--          <el-table-column prop="id" label="序号" width="70" align="center" sortable></el-table-column>-->
+        <!--          <el-table-column label="物品图片">-->
+        <!--            <template v-slot="scope">-->
+        <!--              <div style="display: flex; align-items: center">-->
+        <!--                <el-image style="width: 40px; height: 40px; border-radius: 50%" v-if="scope.row.articleImg"-->
+        <!--                          :src="scope.row.articleImg" :preview-src-list="[scope.row.articleImg]"></el-image>-->
+        <!--              </div>-->
+        <!--            </template>-->
+        <!--          </el-table-column>-->
+        <!--          <el-table-column prop="articleName" label="物品名称"></el-table-column>-->
+        <!--          <el-table-column prop="toName" label="发布人"></el-table-column>-->
+        <!--          <el-table-column prop="content" label="联系内容"></el-table-column>-->
+        <!--          <el-table-column prop="type" label="类型"></el-table-column>-->
+        <!--          <el-table-column prop="time" label="联系时间"></el-table-column>-->
+        <!--          <el-table-column label="操作" align="center" width="180">-->
+        <!--            <template v-slot="scope">-->
+        <!--              <el-button size="mini" type="danger" plain @click="del(scope.row.id)">删除</el-button>-->
+        <!--            </template>-->
+        <!--          </el-table-column>-->
+        <!--        </el-table>-->
+
+        <el-table :data="tableData" stripe:true row-key="id">
+          <el-table-column prop="id" label="序号" width="80" align="center" sortable/>
+
+          <el-table-column prop="name" label="失物招领名称"/>
+          <el-table-column prop="status" label="失物招领状态" :formatter="formatStatus"/>
+          <el-table-column prop="tag" label="物品类型" :formatter="formatTag"/>
+          <el-table-column prop="isLost" label="失物招领类型" :formatter="formatIsLost"/>
+          <el-table-column prop="startTime" label="起始时间"/>
+          <el-table-column prop="endTime" label="截止时间"/>
+          <el-table-column prop="publishTime" label="发表时间"/>
+          <el-table-column label="操作" width="220" align="center">
+            <template v-slot="{ row }">
+              <el-button plain type="danger" size="mini"
+                         @click="() => delItem(row.id)">删除
+              </el-button>
+              <el-button plain type="success" size="mini"
+                         @click="() => updateButton(row.id)">修改
+              </el-button>
+              <el-button plain type="success" size="mini"
+                         @click="() => finishItem(row.id)">完成
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
 
-        <div class="pagination" style="margin-top: 20px">
+        <el-row style="height: 60px" align="middle" type="flex" justify="end">
           <el-pagination
-              background
-              @current-change="handleCurrentChange"
-              :current-page="pageNum"
+              layout="total, sizes, prev, pager, next"
+              :total="total"
+              :current-page="queryParams.page"
+              :page-size="queryParams.pageSize"
               :page-sizes="[5, 10, 20]"
-              :page-size="pageSize"
-              layout="total, prev, pager, next"
-              :total="0">
-          </el-pagination>
-        </div>
+              @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
+          />
+        </el-row>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
-
   data() {
     return {
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),//获取当前用户
       tableData: [],
+      queryParams: {
+        page: 1,
+        pageSize: 5,
+        name: null,
+        status: null,
+        isLost: null,
+        startTime: null,
+        endTime: null
+      },
+      total: 0,
+
       pageNum: 1,
       pageSize: 6,
     }
   },
-  mounted() {
-    this.loadData(1)
-    //加载数据库内容
-  },
-  // methods：本页面所有的点击事件或者其他函数定义区
   methods: {
     loadData(pageNum) {
       if (pageNum) this.pageNum = pageNum;
@@ -92,7 +120,6 @@ export default {
       this.pageNum = pageNum;
       this.loadData(this.pageNum);
     }
-
   }
 }
 </script>
