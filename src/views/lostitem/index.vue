@@ -34,7 +34,7 @@
             <template slot="label">
               <el-tag class="ruletag" type="info" size="medium" effect="dark">物品类型</el-tag>
             </template>
-            <el-select v-model="queryParams.tag" placeholder="请选择物品类型" style="width: auto;" clearable @clear="getItemList">
+            <el-select v-model="queryParams.tag" placeholder="请选择物品类型" style="width: auto;">
               <el-option v-for="option in tagOptions" :key="option.value" :label="option.label"
                 :value="option.value"></el-option>
             </el-select>
@@ -47,7 +47,7 @@
             <template slot="label">
               <el-tag class="ruletag" type="info" size="medium" effect="dark">拾取区域</el-tag>
             </template>
-            <el-select v-model="queryParams.region" placeholder="请选择区域" style="width: auto;" clearable @clear="getItemList">
+            <el-select v-model="queryParams.region" placeholder="请选择区域" style="width: auto;">
               <el-option v-for="(option, index) in regionOptions" :key="index" :label="option.label"
                 :value="option.value"></el-option>
             </el-select>
@@ -56,14 +56,14 @@
             <template slot="label">
               <el-tag class="ruletag" type="info" size="medium" effect="dark">物品颜色</el-tag>
             </template>
-            <el-select v-model="queryParams.color" placeholder="请选择颜色" style="width: auto;" clearable @clear="getItemList">
+            <el-select v-model="queryParams.color" placeholder="请选择颜色" style="width: auto;">
               <el-option v-for="option in colorOptions" :key="option.value" :label="option.label"
                 :value="option.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
             <template slot="label">
-              <el-tag class="ruletag" type="info" size="medium" effect="dark">发布时间</el-tag>
+              <el-tag class="ruletag"  type="info" size="medium" effect="dark" >发布时间</el-tag>
             </template>
             <el-date-picker v-model="queryParams.publishTime" value-format="yyyy-MM-dd HH:mm:ss" type="date" placeholder="选择日期"
               :default-time="['00:00:00', '23:59:59']" />
@@ -74,6 +74,8 @@
     </div>
 
     <div style=" width:80%;margin: 20px auto" class="container">
+
+
       <div type="flex" align="top" style="margin-top: 20px">
         <el-row class="selcard" :gutter="20">
           <el-col :span="colspan" v-for="item in itemData" style="margin-bottom: 20px">
@@ -83,13 +85,10 @@
                   style="height: 75px; width: 75px;border: 1px solid #eeeeee;border-radius: 15px;">
 
                 <div style="margin-left: 10px">
-                  <div style="font-weight: 550;max-height: 20px;">{{ item.name }}</div>
-                  <div style="margin-top: 10px;font-size: 12px"><el-tag size="mini" type="success">发布人:{{ item.userId
-                      }}</el-tag></div>
+                  <div  style="font-weight: 550;max-height: 20px;">{{ item.name }}</div>
+                  <div style="margin-top: 10px;font-size: 12px"><el-tag size="mini" type="success">发布人:{{ item.userId }}</el-tag></div>
                   <!--根据用户id关联一下找出用户名称-->
-                  <div style="margin-top: 5px;font-size: 12px"><el-tag size="mini" type="info">时间:{{ item.startTime }}
-                      -{{
-                        item.endTime }}</el-tag>
+                  <div style="margin-top: 5px;font-size: 12px"><el-tag size="mini" type="info">时间:{{ item.startTime }} -{{ item.endTime }}</el-tag>
                   </div>
                 </div>
               </div>
@@ -101,22 +100,13 @@
       <el-row style="height: 60px" align="middle" type="flex" justify="end">
         <el-pagination layout="total, sizes, prev, pager, next" :total="total" :current-page="queryParams.page"
           :page-size="queryParams.pageSize" :page-sizes="[8, 16, 20]" @current-change="handleCurrentChange"
-          @size-change="handleSizeChange">
+          @size-change="handleSizeChange" >
 
         </el-pagination>
       </el-row>
     </div>
 
     <el-dialog title="详细信息" :visible.sync="viewVisible" v-if="currentNode" width="50%" destroy-on-close>
-      <template slot="title">
-        <div class="chatbutton">
-          <h2 style="align-self:flex-start;">详细信息</h2>
-          <el-button type="info" @click="chat(currentNode.userId)" size="mini" round>
-            <i class="el-icon-chat-dot-round" style="font-size: 15px; margin-left: 3px; cursor: pointer">联系失主</i>
-          </el-button>
-        </div>
-      </template>
-
       <!-- <div v-html="viewData" class="w-e-text w-e-text-container"></div> -->
       <el-container>
 
@@ -162,7 +152,6 @@
           </div>
         </div>
       </el-main>
-
     </el-dialog>
 
   </div>
@@ -188,7 +177,7 @@ export default {
         pageSize: 8,
         name: null,
         status: null,
-        isLost: 0,
+        isLost: 1,
         //这里tag现在有数据了
         tag: null,
         //时间换成一个框框了，只有一个时间输入，然后从这个时间至今来查询
@@ -207,8 +196,7 @@ export default {
         region: null,
         color: null,
         publishTime: null,
-        description: null,
-        userId: null
+        description: null
       },
       viewVisible: false,
 
@@ -282,18 +270,18 @@ export default {
   },
   methods: {
     handleResize() {
-      if (window.innerWidth < 1080) {
+      if(window.innerWidth < 1080){
         if (window.innerWidth < 1080 && window.innerWidth > 768) {
-          this.column = 1;
-          this.colspan = 12;
-        }
-        if (window.innerWidth <= 768) {
-          this.inline = false;
-          this.colspan = 12;
-        } else {
-          this.inline = true;
-        }
+        this.column = 1;
+        this.colspan = 12;
+      }
+      if (window.innerWidth <= 768) {
+        this.inline = false;
+        this.colspan = 12;
       } else {
+        this.inline = true;
+      }
+      }else{
         this.column = 2;
         this.colspan = 6;
         this.inline = true;
@@ -328,7 +316,6 @@ export default {
       }
     },
     async viewContent(item) {
-      // TODO:后端要修改缓存，不然每一次都会去查询
       const response = await getUserById(item.userId);
       const { data } = response;
       const { name, phone } = data || {};
@@ -350,8 +337,7 @@ export default {
         color: colorLabel,
         publishTime,
         description,
-        img,
-        userId: item.userId
+        img
       };
 
       this.viewVisible = true;
@@ -396,12 +382,6 @@ export default {
       this.form = JSON.parse(JSON.stringify(item))  //生成另一个对象和item相等但是他们是不同的对象
       this.fromVisible = true
     },
-    chat(userId) {
-      this.$request.post('/chatGroup/add', { chatUserId: userId, userId: this.user.id }).then(res => {
-        this.$router.push('/chat');
-      })
-    },
-
     // submit() {
     //   if (this.user.id === this.form.userId) {
     //     this.$message.warning('您不能联系自己')
@@ -439,20 +419,17 @@ export default {
     align-items: flex-end;
   }
 
-  .el-col-12 {
-    width: 100% !important;
-  }
-
+  .el-col-12{
+  width: 100% !important;
+}
   .selcard {
     display: flex;
     flex-direction: column;
   }
 }
-
-.el-col-12 {
+.el-col-12{
   width: 50%;
 }
-
 .el-tag {
   font-weight: bolder;
 }
@@ -620,16 +597,8 @@ export default {
   padding: 10px;
   border-top: 1px solid #e0e0e0;
 }
-
-.ruletag {
-  font-weight: bolder;
+.ruletag{
+  font-weight:bolder;
   font-size: 13px;
-}
-
-.chatbutton {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 95%;
 }
 </style>

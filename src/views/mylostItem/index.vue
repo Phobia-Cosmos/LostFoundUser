@@ -228,8 +228,8 @@ import { deleteItem, finishItem, modifyItem, publishItem, userGetItemById, userP
 export default {
   data() {
     return {
-      inline: true,
       labelPosition: 'right',
+      inline: true,
       tableData: [],
       updateVisible: false,
       addVisible: false,
@@ -241,7 +241,9 @@ export default {
         pageSize: 5,
         name: null,
         status: null,
-        isLost: 0,
+        isLost: 1,
+        // startTime: null,
+        // endTime: null
       },
       total: 0,
 

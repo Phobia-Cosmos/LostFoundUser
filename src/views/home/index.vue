@@ -1,9 +1,11 @@
 <template>
   <div class="main-content">
-    <div style="width:80%;margin:0 auto ">
-      <el-carousel height="320px">
+    <div >
+      <el-carousel class="main-img">
         <el-carousel-item v-for="item in carouseDate" :key="item">
-          <img :src="item" alt="" style="width:100%;height:320px ">//动态渲染
+          <!-- 动态渲染 -->
+          <el-image style="width: auto; height: 100% ;background-color: rgb(58, 63, 67);" :src="item"
+            fit="contain"></el-image>
         </el-carousel-item>
       </el-carousel>
 
@@ -126,6 +128,7 @@ export default {
   // mounted() {
   //   this.loadData()
   // },
+
   methods: {
     router() {
       return router
@@ -174,3 +177,40 @@ export default {
   }
 }
 </script>
+<style>
+@media screen and (min-width: 1080px) {
+  .el-carousel__container {
+    width: 40% !important;
+    margin: 0 auto;
+  }
+}
+@media screen and (max-width:1080px) and (min-width: 800px) {
+  .el-carousel__container {
+    width: 60% !important;
+    margin: 0 auto;
+  }
+}
+@media screen and (max-width:800px) {
+  .el-carousel__container {
+    width: 95% !important;
+    margin: 0 auto;
+  }
+}
+.el-carousel__container{
+  aspect-ratio: 16 / 9 !important ;
+  margin: 0 auto;
+  height: auto;
+}
+body {
+  background-size: cover;
+  background-repeat: no-repeat; /* 防止背景图片重复 */
+}
+
+.el-carousel__item {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  /* 垂直居中 */
+  background-color: rgb(58, 63, 67);
+}
+</style>

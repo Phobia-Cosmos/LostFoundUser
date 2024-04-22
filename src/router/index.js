@@ -13,15 +13,23 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        meta: {name: '登录'},
+        meta: { name: '登录' },
         component: () => import('../views/login/index.vue')
     },
     {
         path: '/register',
         name: 'Register',
-        meta: {name: '注册'},
+        meta: { name: '注册' },
         component: () => import('../views/register/index.vue')
     },
+    //单开测试页面
+    {
+        path: '/test',
+        name: 'test',
+        meta: { name: '测试' },
+        component: () => import('../views/newtest/index.vue')
+    },
+
     {
         path: '/',
         name: 'Front',
@@ -31,33 +39,46 @@ const routes = [
             {
                 path: 'home',
                 name: 'Home',
-                meta: {name: '系统首页'},
+                meta: { name: '系统首页' },
                 component: () => import('../views/home')
             },
             {
                 path: 'item',
                 name: 'Item',
-                meta: {name: '失物招领广场'},
+                meta: { name: '招领广场' },
                 component: () => import('../views/item')
+            },
+            {
+                path: 'lostitem',
+                name: 'LostItem',
+                meta: { name: '遗失广场' },
+                component: () => import('../views/lostitem')
             },
             {
                 path: 'suggestion',
                 name: 'Suggestion',
-                meta: {name: '平台建议'},
+                meta: { name: '平台建议' },
                 component: () => import('../views/suggestion')
             },
             {
                 path: 'myItem',
                 name: 'MyItem',
-                meta: {name: '我的失物招领'},
+                meta: { name: '我的失物招领' },
                 component: () => import('../views/myItem')
             },
             {
-                path: 'message',
-                name: 'Message',
-                meta: {name: '我的消息'},
-                component: () => import('../views/message')
+                path: 'mylostItem',
+                name: 'MylostItem',
+                meta: { name: '我的失物招领' },
+                component: () => import('../views/mylostItem')
             },
+            {
+                path: 'chat',
+                name: 'Chat',
+                meta: { name: '聊天信息' },
+                component: () => import('../views/Chat')
+            },
+
         ]
     },
     {
@@ -68,7 +89,7 @@ const routes = [
     {
         path: "*",
         redirect: "/404",
-        meta: {name: '无法访问'},
+        meta: { name: '无法访问' },
     },
 ]
 
