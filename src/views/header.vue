@@ -70,6 +70,8 @@
 <style></style>
 
 <script>
+import {updateUser} from "@/apis/user";
+
 export default {
     data() {
         return {

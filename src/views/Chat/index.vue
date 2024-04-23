@@ -123,7 +123,7 @@ export default {
 
         // Update message read status
         await updateRead(chatUserId)
-        await this.loadChatGroup()
+        // await this.loadChatGroup()
 
         // Load user chat
         const chatResponse = await selectUserChat(chatUserId)
@@ -163,6 +163,7 @@ export default {
         //  浏览器端收消息，获得从服务端数据库里的最新的聊天消息
         socket.onmessage = function () {
           _this.loadChatGroup()
+          console.log("数据已经来了！！！！")
           _this.loadChatList(_this.activeChatUserId)
         }
         //关闭事件

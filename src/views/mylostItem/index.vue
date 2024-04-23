@@ -480,13 +480,13 @@ export default {
       const firstImg = imgUrls[0]; // Get the first image URL
       return 'http://118.25.40.159:9090' + firstImg; // Add the prefix to the first image URL
     },
-    formatDate(timestamp) {
-      const date = new Date(timestamp);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+    formatDate(dateArray) {
+      const year = dateArray[0];
+      const month = String(dateArray[1]).padStart(2, '0');
+      const day = String(dateArray[2]).padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
+
     formatStatus(status) {
       switch (status.status) {
         case 0:
@@ -505,7 +505,7 @@ export default {
       return isLost.isLost ? '失物' : '招领';
     },
     formatRegion(region) {
-      switch (region) {
+      switch (region.region) {
         case 'region-1':
           return '一区';
         case 'region-2':
@@ -563,7 +563,7 @@ export default {
       }
     },
     formatColor(color) {
-      switch (color) {
+      switch (color.color) {
         case 1:
           return '红色';
         case 2:

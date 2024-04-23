@@ -13,22 +13,22 @@
                   <el-tag class="ruletag" type="info" size="medium" effect="dark">物品名称</el-tag>
                 </template>
                 <el-input v-model="queryParams.name" placeholder="请填写物品名称" clearable @clear="reset"
-                  @keyup.enter.native="initFun" style="width: auto;" />
+                          @keyup.enter.native="initFun" style="width: auto;"/>
               </el-form-item>
               <el-form-item>
                 <template slot="label">
                   <el-tag class="ruletag" type="info" size="medium" effect="dark">招领状态</el-tag>
                 </template>
                 <el-select v-model="queryParams.status" style="width: auto" placeholder="请选择" clearable
-                  @clear="getItemList">
+                           @clear="getItemList">
                   <el-option v-for="(item, index) in [
                     { label: '未审核', value: 0 },
                     { label: '审核失败', value: 1 },
                     { label: '未解决', value: 2 },
                     { label: '已解决', value: 3 }
-                  ]" :key="index" :label="item.label" :value="item.value" />
+                  ]" :key="index" :label="item.label" :value="item.value"/>
                 </el-select>
-                  <el-button type="info" icon="el-icon-search" @click="getItemList()" round>搜索</el-button>
+                <el-button type="info" icon="el-icon-search" @click="getItemList()" round>搜索</el-button>
               </el-form-item>
             </el-form>
             <!--        TODO:为什么这里会自动变灰？-->
@@ -44,31 +44,32 @@
                 <el-button type="info" @click="addButton">发布招领</el-button>
               </div>
             </div>
-          </div>、
+          </div>
+          、
           <div class="widget-content">
 
             <div class="table">
               <el-table :data="tableData" stripe:true row-key="id">
                 <!--          TODO:具体信息点击后显示，或者触碰显示-->
-                <el-table-column prop="id" label="序号" align="center" sortable />
+                <el-table-column prop="id" label="序号" align="center" sortable/>
                 <el-table-column label="失物招领图片" show-overflow-tooltip>
                   <template v-slot="scope">
                     <el-image style="width: 60px; height: 45px; border-radius: 10%" v-if="scope.row.img"
-                      :src="formatImageUrl(scope.row.img)"
-                      :preview-src-list="[formatImageUrl(scope.row.img)]"></el-image>
+                              :src="formatImageUrl(scope.row.img)"
+                              :preview-src-list="[formatImageUrl(scope.row.img)]"></el-image>
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="name" label="失物招领名称" />
-                <el-table-column prop="status" label="失物招领状态" :formatter="formatStatus" />
+                <el-table-column prop="name" label="失物招领名称"/>
+                <el-table-column prop="status" label="失物招领状态" :formatter="formatStatus"/>
                 <!-- 下面这个要改一下 -->
-                <el-table-column prop="tag" label="物品类型" :formatter="formatTag" />
+                <el-table-column prop="tag" label="物品类型" :formatter="formatTag"/>
                 <!-- 下面这个要删除的 -->
-                <el-table-column prop="isLost" label="失物招领类型" :formatter="formatIsLost" />
+                <el-table-column prop="isLost" label="失物招领类型" :formatter="formatIsLost"/>
                 <!-- 下面两个是新加的 -->
-                <el-table-column prop="color" label="物品颜色" :formatter="formatColor" />
-                <el-table-column prop="region" label="拾取地点" :formatter="formatRegion" />
-                <el-table-column prop="publishTime" label="发表时间" />
+                <el-table-column prop="color" label="物品颜色" :formatter="formatColor"/>
+                <el-table-column prop="region" label="拾取地点" :formatter="formatRegion"/>
+                <el-table-column prop="publishTime" label="发表时间"/>
                 <el-table-column label="操作" width="220" align="center">
                   <template v-slot="{ row }">
                     <el-button plain type="danger" size="mini" @click="() => delItem(row.id)">删除
@@ -83,8 +84,9 @@
 
               <el-row style="height: 60px" align="middle" type="flex" justify="end">
                 <el-pagination layout="total, sizes, prev, pager, next" :total="total" :current-page="queryParams.page"
-                  :page-size="queryParams.pageSize" :page-sizes="[5, 10, 20]" @current-change="handleCurrentChange"
-                  @size-change="handleSizeChange" />
+                               :page-size="queryParams.pageSize" :page-sizes="[5, 10, 20]"
+                               @current-change="handleCurrentChange"
+                               @size-change="handleSizeChange"/>
               </el-row>
             </div>
           </div>
@@ -92,14 +94,14 @@
       </div>
 
 
-
-      <el-dialog title="修改失物招领" :visible.sync="updateVisible" width="50%" @close="btnCancelUpdate" destroy-on-close>
+      <el-dialog title="修改失物招领" :visible.sync="updateVisible" width="50%" @close="btnCancelUpdate"
+                 destroy-on-close>
         <!--不写rules-->
         <el-form ref="updateForm" label-width="150px" style="padding-right: 50px" :model="updateForm">
           <el-form-item prop="img" label="物品图片">
             <el-upload class="avatar-uploader" :action="uploadUrl" list-type="picture"
-              :headers="{ authentication: user.token }" :on-success="handleAvatarSuccess"
-              :file-list="formattedFileList">
+                       :headers="{ authentication: user.token }" :on-success="handleAvatarSuccess"
+                       :file-list="formattedFileList">
               <el-button type="primary">上传招领物品图片(可上传多张图片)</el-button>
             </el-upload>
           </el-form-item>
@@ -117,21 +119,21 @@
           <el-form-item label="物品类型" label-width="150px" required>
             <el-select v-model="addForm.tag" placeholder="请选择物品类型" style="width: auto;">
               <el-option v-for="option in tagOptions" :key="option.value" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="失物拾取/遗失区域" prop="" label-width="150px" required>
             <el-select v-model="addForm.region" placeholder="请选择区域" style="width: auto;">
               <el-option v-for="(option, index) in regionOptions" :key="index" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="物品颜色" prop="" label-width="150px " required>
             <el-select v-model="updateForm.color" placeholder="请选择颜色" style="width: auto;">
               <el-option v-for="option in colorOptions" :key="option.value" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
@@ -139,7 +141,7 @@
             <el-col :span="11">
               <el-form-item prop="date">
                 <el-date-picker type="date" placeholder="请选择日期" v-model="updateForm.date"
-                  style="width: 205px"></el-date-picker>
+                                style="width: 205px"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-form-item>
@@ -156,17 +158,18 @@
         </el-form>
       </el-dialog>
 
-      <el-dialog title="详细信息" :visible.sync="viewVisible" width="80%" :close-on-click-modal="false" destroy-on-close>
+      <el-dialog title="详细信息" :visible.sync="viewVisible" width="80%" :close-on-click-modal="false"
+                 destroy-on-close>
         <div v-html="viewData" class="w-e-text w-e-text-container"></div>
       </el-dialog>
 
       <el-dialog title="发布招领" :append-to-body="true" :visible.sync="addVisible" width="50%" @close="btnCancelUpdate"
-        destroy-on-close>
+                 destroy-on-close>
         <el-form ref="addForm" label-width="100px" style="padding-right: 50px" :model="addForm">
 
           <el-form-item prop="img" label="物品图片" label-width="150px">
             <el-upload class="avatar-uploader" :action="uploadUrl" :headers="{ authentication: user.token }"
-              list-type="picture" :on-success="handleImgSuccess" :file-list="formattedFileList">
+                       list-type="picture" :on-success="handleImgSuccess" :file-list="formattedFileList">
               <el-button type="primary">上传招领物品图片(可上传多张图片)</el-button>
             </el-upload>
           </el-form-item>
@@ -176,25 +179,24 @@
           </el-form-item>
 
 
-
           <el-form-item label="物品类型" label-width="150px" required>
             <el-select v-model="addForm.tag" placeholder="请选择物品类型" style="width: auto;">
               <el-option v-for="option in tagOptions" :key="option.value" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="拾取区域" prop="" label-width="150px" required>
             <el-select v-model="addForm.region" placeholder="请选择区域" style="width: auto;">
               <el-option v-for="(option, index) in regionOptions" :key="index" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="物品颜色" prop="" label-width="150px " required>
             <el-select v-model="addForm.color" placeholder="请选择颜色" style="width: auto;">
               <el-option v-for="option in colorOptions" :key="option.value" :label="option.label"
-                :value="option.value"></el-option>
+                         :value="option.value"></el-option>
             </el-select>
           </el-form-item>
 
@@ -202,7 +204,7 @@
             <el-col :span="11">
               <el-form-item prop="date">
                 <el-date-picker type="date" placeholder="请选择日期" v-model="addForm.publishTime"
-                  style="width: 205px"></el-date-picker>
+                                style="width: 205px"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-form-item>
@@ -223,7 +225,7 @@
 
 <script>
 import E from 'wangeditor'
-import { deleteItem, finishItem, modifyItem, publishItem, userGetItemById, userPageQuery } from "@/apis/item";
+import {deleteItem, finishItem, modifyItem, publishItem, userGetItemById, userPageQuery} from "@/apis/item";
 
 export default {
   data() {
@@ -275,55 +277,55 @@ export default {
       viewData: null,
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       colorOptions: [
-        { label: '红色', value: 1 },
-        { label: '蓝色', value: 2 },
-        { label: '黄色', value: 3 },
-        { label: '绿色', value: 4 },
-        { label: '黑色', value: 5 },
-        { label: '白色', value: 6 },
-        { label: '紫色', value: 7 },
-        { label: '橙色', value: 8 },
-        { label: '灰色', value: 9 },
-        { label: '粉色', value: 10 },
-        { label: '褐色', value: 11 },
-        { label: '银色', value: 12 }
+        {label: '红色', value: 1},
+        {label: '蓝色', value: 2},
+        {label: '黄色', value: 3},
+        {label: '绿色', value: 4},
+        {label: '黑色', value: 5},
+        {label: '白色', value: 6},
+        {label: '紫色', value: 7},
+        {label: '橙色', value: 8},
+        {label: '灰色', value: 9},
+        {label: '粉色', value: 10},
+        {label: '褐色', value: 11},
+        {label: '银色', value: 12}
       ],
       tagOptions: [
-        { label: '证件', value: 1 },
-        { label: '笔记本/书', value: 2 },
-        { label: '蓝牙/有线耳机', value: 3 },
-        { label: '手机', value: 4 },
-        { label: '雨伞', value: 5 },
-        { label: '水杯/保温杯', value: 6 },
-        { label: '其他', value: 7 }
+        {label: '证件', value: 1},
+        {label: '笔记本/书', value: 2},
+        {label: '蓝牙/有线耳机', value: 3},
+        {label: '手机', value: 4},
+        {label: '雨伞', value: 5},
+        {label: '水杯/保温杯', value: 6},
+        {label: '其他', value: 7}
       ],
       regionOptions: [
-        { label: '一区', value: 'region-1' },
-        { label: '二区', value: 'region-2' },
-        { label: '三区', value: 'region-3' },
-        { label: '四区', value: 'region-4' },
-        { label: '五区', value: 'region-5' },
-        { label: '六区', value: 'region-6' },
-        { label: '七区', value: 'region-7' },
-        { label: '八区', value: 'region-8' },
-        { label: '一食堂', value: 'cafeteria-1' },
-        { label: '二食堂', value: 'cafeteria-2' },
-        { label: '三食堂', value: 'cafeteria-3' },
-        { label: '四食堂', value: 'cafeteria-4' },
-        { label: '五食堂', value: 'cafeteria-5' },
-        { label: '六食堂', value: 'cafeteria-6' },
-        { label: '七食堂', value: 'cafeteria-7' },
-        { label: '八食堂', value: 'cafeteria-8' },
-        { label: '第一教学楼', value: 'classbuild-1' },
-        { label: '第二教学楼', value: 'classbuild-2' },
-        { label: '第三教学楼', value: 'classbuild-3' },
-        { label: '第四教学楼', value: 'classbuild-4' },
-        { label: '第五教学楼', value: 'classbuild-5' },
-        { label: '第六教学楼', value: 'classbuild-6' },
-        { label: '第七教学楼', value: 'classbuild-7' },
-        { label: '第八教学楼', value: 'classbuild-8' },
-        { label: '第九教学楼', value: 'classbuild-9' },
-        { label: '第十教学楼', value: 'classbuild-10' }
+        {label: '一区', value: 'region-1'},
+        {label: '二区', value: 'region-2'},
+        {label: '三区', value: 'region-3'},
+        {label: '四区', value: 'region-4'},
+        {label: '五区', value: 'region-5'},
+        {label: '六区', value: 'region-6'},
+        {label: '七区', value: 'region-7'},
+        {label: '八区', value: 'region-8'},
+        {label: '一食堂', value: 'cafeteria-1'},
+        {label: '二食堂', value: 'cafeteria-2'},
+        {label: '三食堂', value: 'cafeteria-3'},
+        {label: '四食堂', value: 'cafeteria-4'},
+        {label: '五食堂', value: 'cafeteria-5'},
+        {label: '六食堂', value: 'cafeteria-6'},
+        {label: '七食堂', value: 'cafeteria-7'},
+        {label: '八食堂', value: 'cafeteria-8'},
+        {label: '第一教学楼', value: 'classbuild-1'},
+        {label: '第二教学楼', value: 'classbuild-2'},
+        {label: '第三教学楼', value: 'classbuild-3'},
+        {label: '第四教学楼', value: 'classbuild-4'},
+        {label: '第五教学楼', value: 'classbuild-5'},
+        {label: '第六教学楼', value: 'classbuild-6'},
+        {label: '第七教学楼', value: 'classbuild-7'},
+        {label: '第八教学楼', value: 'classbuild-8'},
+        {label: '第九教学楼', value: 'classbuild-9'},
+        {label: '第十教学楼', value: 'classbuild-10'}
       ]
     }
   },
@@ -339,7 +341,7 @@ export default {
   computed: {
     formattedFileList() {
       if (this.updateForm.img) {
-        return [{ uid: '-1', url: this.updateForm.img }];
+        return [{uid: '-1', url: this.updateForm.img}];
       } else {
         return [];
       }
@@ -348,16 +350,16 @@ export default {
   methods: {
     async getItemList() {
       try {
-        const response = await userPageQuery({ ...this.queryParams, userId: this.user.id });
-        const { data } = response;
-        const { records, total } = data;
+        const response = await userPageQuery({...this.queryParams, userId: this.user.id});
+        const {data} = response;
+        const {records, total} = data;
         this.total = total;
         this.tableData = records.map(record => ({
           ...record,
           publishTime: this.formatDate(record.publishTime)
         }));
         // console.log(this.total)
-        // console.log(this.tableData)
+        console.log(this.tableData)
       } catch (error) {
         console.error('An error occurred while fetching item list:', error);
       }
@@ -372,7 +374,7 @@ export default {
     async getItemById(id) {
       try {
         const response = await userGetItemById(id);
-        const { data } = response;
+        const {data} = response;
         // TODO:这个起始时间还没有设置
         this.updateForm.name = data.name
         this.updateForm.img = data.img
@@ -390,7 +392,7 @@ export default {
       }
     },
     async publishItem() {
-      const response = await publishItem({ ...this.addForm, userId: this.user.id });
+      const response = await publishItem({...this.addForm, userId: this.user.id});
       if (response.code === 200) {
         this.$message.success(response.msg)
         this.btnCancelAdd()
@@ -479,12 +481,19 @@ export default {
       return 'http://118.25.40.159:9090' + firstImg; // Add the prefix to the first image URL
     },
     formatDate(timestamp) {
-      const date = new Date(timestamp);
+      const date = new Date(timestamp[0], timestamp[1] - 1, timestamp[2], timestamp[3], timestamp[4]);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
+    // formatDate(timestamp) {
+    //   const date = new Date(timestamp);
+    //   const year = date.getFullYear();
+    //   const month = String(date.getMonth() + 1).padStart(2, '0');
+    //   const day = String(date.getDate()).padStart(2, '0');
+    //   return `${year}-${month}-${day}`;
+    // },
     formatStatus(status) {
       switch (status.status) {
         case 0:
@@ -503,7 +512,7 @@ export default {
       return isLost.isLost ? '失物' : '招领';
     },
     formatRegion(region) {
-      switch (region) {
+      switch (region.region) {
         case 'region-1':
           return '一区';
         case 'region-2':
@@ -561,7 +570,7 @@ export default {
       }
     },
     formatColor(color) {
-      switch (color) {
+      switch (color.color) {
         case 1:
           return '红色';
         case 2:
@@ -722,7 +731,8 @@ export default {
   /* 控件样式 */
 }
 
-.widget-content {}
+.widget-content {
+}
 
 .widget-footer {
   display: flex;

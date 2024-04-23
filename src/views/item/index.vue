@@ -111,7 +111,7 @@
       <template slot="title">
         <div class="chatbutton">
           <h2 style="align-self:flex-start;">详细信息</h2>
-          <el-button type="info" @click="chat(currentNode.userId)" size="mini" round>
+          <el-button type="info" v-if="currentNode.userId !== this.user.id" @click="chat(currentNode.userId)" size="mini" round>
             <i class="el-icon-chat-dot-round" style="font-size: 15px; margin-left: 3px; cursor: pointer">联系失主</i>
           </el-button>
         </div>
